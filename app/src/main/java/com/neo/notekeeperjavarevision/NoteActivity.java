@@ -43,7 +43,7 @@ public class NoteActivity extends AppCompatActivity {
         mViewModel = viewModelProvider.get(NoteActivityViewModel.class);
 
         // logic ensures that we only restore state on sys cleanup(ViewModel is newly created) and not configChange
-        if(savedInstanceState != null && mViewModel.mIsNewlyCreated){
+        if (savedInstanceState != null && mViewModel.mIsNewlyCreated) {
             mViewModel.restoreState(savedInstanceState);
         }
 
@@ -77,7 +77,7 @@ public class NoteActivity extends AppCompatActivity {
     // used to store original note values when we enter this activity in var, and if user cancels out we just set it back to
     // default var or original note values and save in the prop in the ViewModel fields
     private void saveOriginalNoteValues() {
-        if(mIsNewNote)
+        if (mIsNewNote)
             return;
 
         mViewModel.mOriginalNoteCourseId = mNote.getCourse().getCourseId();
@@ -89,13 +89,13 @@ public class NoteActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        if(mIsCancelling){
-            if(mIsNewNote){
+        if (mIsCancelling) {
+            if (mIsNewNote) {
                 DataManager.getInstance().removeNote(mNotePosition);
-            } else{
+            } else {
                 storePreviousNoteValues();
             }
-        } else{
+        } else {
             saveNote();
         }
         super.onPause();
@@ -132,13 +132,12 @@ public class NoteActivity extends AppCompatActivity {
     private void readDisplayStateValues() {
         Intent intent = getIntent();
         POSITION_NOT_SET = -1;
-        int position = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET);
-        mIsNewNote = position == POSITION_NOT_SET;
+        mNotePosition = intent.getIntExtra(NOTE_POSITION, POSITION_NOT_SET);
+        mIsNewNote = mNotePosition == POSITION_NOT_SET;
         if (mIsNewNote) {
             createNewNote();
-        } else {
-            mNote = DataManager.getInstance().getNotes().get(position);
         }
+        mNote = DataManager.getInstance().getNotes().get(mNotePosition);
 
 
     }
@@ -147,7 +146,7 @@ public class NoteActivity extends AppCompatActivity {
         DataManager dm = DataManager.getInstance();
         // gets pos of new note
         mNotePosition = dm.createNewNote();
-        mNote = dm.getNotes().get(mNotePosition);
+//        mNote = dm.getNotes().get(mNotePosition);
     }
 
     @Override
@@ -163,7 +162,7 @@ public class NoteActivity extends AppCompatActivity {
         if (id == R.id.action_send_mail) {
             sendEmail();
             return true;
-        } else if(id == R.id.action_cancel){
+        } else if (id == R.id.action_cancel) {
             mIsCancelling = true;
             finish();
         }
